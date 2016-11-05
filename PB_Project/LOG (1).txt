@@ -1,0 +1,74 @@
+biadmin@bivm:~> hadoop jar /home/biadmin/pb/tweetWordCount.jar WordCount
+15/02/20 18:29:20 WARN mapred.JobClient: Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same.
+15/02/20 18:29:21 INFO mapred.FileInputFormat: Total input paths to process : 1
+15/02/20 18:29:22 INFO mapred.JobClient: Running job: job_201502191402_0010
+15/02/20 18:29:23 INFO mapred.JobClient:  map 0% reduce 0%
+15/02/20 18:29:43 INFO mapred.JobClient:  map 3% reduce 0%
+15/02/20 18:29:44 INFO mapred.JobClient:  map 5% reduce 0%
+15/02/20 18:29:46 INFO mapred.JobClient:  map 9% reduce 0%
+15/02/20 18:29:47 INFO mapred.JobClient:  map 12% reduce 0%
+15/02/20 18:29:49 INFO mapred.JobClient:  map 14% reduce 0%
+15/02/20 18:29:50 INFO mapred.JobClient:  map 15% reduce 0%
+15/02/20 18:29:52 INFO mapred.JobClient:  map 16% reduce 0%
+15/02/20 18:29:53 INFO mapred.JobClient:  map 18% reduce 0%
+15/02/20 18:29:55 INFO mapred.JobClient:  map 20% reduce 0%
+15/02/20 18:30:03 INFO mapred.JobClient:  map 22% reduce 0%
+15/02/20 18:30:14 INFO mapred.JobClient:  map 24% reduce 0%
+15/02/20 18:30:16 INFO mapred.JobClient:  map 25% reduce 0%
+15/02/20 18:30:17 INFO mapred.JobClient:  map 28% reduce 0%
+15/02/20 18:30:18 INFO mapred.JobClient:  map 30% reduce 0%
+15/02/20 18:30:21 INFO mapred.JobClient:  map 34% reduce 0%
+15/02/20 18:30:24 INFO mapred.JobClient:  map 38% reduce 0%
+15/02/20 18:30:27 INFO mapred.JobClient:  map 39% reduce 0%
+15/02/20 18:30:42 INFO mapred.JobClient:  map 44% reduce 0%
+15/02/20 18:30:46 INFO mapred.JobClient:  map 48% reduce 0%
+15/02/20 18:30:48 INFO mapred.JobClient:  map 50% reduce 0%
+15/02/20 18:31:16 INFO mapred.JobClient:  map 53% reduce 0%
+15/02/20 18:31:19 INFO mapred.JobClient:  map 60% reduce 0%
+15/02/20 18:31:22 INFO mapred.JobClient:  map 73% reduce 0%
+15/02/20 18:31:24 INFO mapred.JobClient:  map 73% reduce 17%
+15/02/20 18:31:25 INFO mapred.JobClient:  map 76% reduce 17%
+15/02/20 18:31:28 INFO mapred.JobClient:  map 83% reduce 17%
+15/02/20 18:31:31 INFO mapred.JobClient:  map 89% reduce 17%
+15/02/20 18:31:34 INFO mapred.JobClient:  map 96% reduce 17%
+15/02/20 18:31:37 INFO mapred.JobClient:  map 100% reduce 17%
+15/02/20 18:31:39 INFO mapred.JobClient:  map 100% reduce 25%
+15/02/20 18:31:50 INFO mapred.JobClient:  map 100% reduce 100%
+15/02/20 18:31:57 INFO mapred.JobClient: Job complete: job_201502191402_0010
+15/02/20 18:31:57 INFO mapred.JobClient: Counters: 30
+15/02/20 18:31:57 INFO mapred.JobClient:   File System Counters
+15/02/20 18:31:57 INFO mapred.JobClient:     FILE: BYTES_READ=439366299
+15/02/20 18:31:57 INFO mapred.JobClient:     FILE: BYTES_WRITTEN=556477097
+15/02/20 18:31:57 INFO mapred.JobClient:     HDFS: BYTES_READ=504318966
+15/02/20 18:31:57 INFO mapred.JobClient:     HDFS: BYTES_WRITTEN=28331734
+15/02/20 18:31:57 INFO mapred.JobClient:   org.apache.hadoop.mapreduce.JobCounter
+15/02/20 18:31:57 INFO mapred.JobClient:     TOTAL_LAUNCHED_MAPS=4
+15/02/20 18:31:57 INFO mapred.JobClient:     TOTAL_LAUNCHED_REDUCES=1
+15/02/20 18:31:57 INFO mapred.JobClient:     DATA_LOCAL_MAPS=4
+15/02/20 18:31:57 INFO mapred.JobClient:     SLOTS_MILLIS_MAPS=258295
+15/02/20 18:31:57 INFO mapred.JobClient:     SLOTS_MILLIS_REDUCES=53457
+15/02/20 18:31:57 INFO mapred.JobClient:     FALLOW_SLOTS_MILLIS_MAPS=0
+15/02/20 18:31:57 INFO mapred.JobClient:     FALLOW_SLOTS_MILLIS_REDUCES=0
+15/02/20 18:31:57 INFO mapred.JobClient:   org.apache.hadoop.mapreduce.TaskCounter
+15/02/20 18:31:57 INFO mapred.JobClient:     MAP_INPUT_RECORDS=427251
+15/02/20 18:31:57 INFO mapred.JobClient:     MAP_OUTPUT_RECORDS=7010366
+15/02/20 18:31:57 INFO mapred.JobClient:     MAP_OUTPUT_BYTES=560490324
+15/02/20 18:31:57 INFO mapred.JobClient:     MAP_OUTPUT_MATERIALIZED_BYTES=116233704
+15/02/20 18:31:57 INFO mapred.JobClient:     SPLIT_RAW_BYTES=492
+15/02/20 18:31:57 INFO mapred.JobClient:     COMBINE_INPUT_RECORDS=8265848
+15/02/20 18:31:57 INFO mapred.JobClient:     COMBINE_OUTPUT_RECORDS=1705768
+15/02/20 18:31:57 INFO mapred.JobClient:     REDUCE_INPUT_GROUPS=113199
+15/02/20 18:31:57 INFO mapred.JobClient:     REDUCE_SHUFFLE_BYTES=116233704
+15/02/20 18:31:57 INFO mapred.JobClient:     REDUCE_INPUT_RECORDS=450286
+15/02/20 18:31:57 INFO mapred.JobClient:     REDUCE_OUTPUT_RECORDS=113199
+15/02/20 18:31:57 INFO mapred.JobClient:     SPILLED_RECORDS=2156054
+15/02/20 18:31:57 INFO mapred.JobClient:     CPU_MILLISECONDS=155720
+15/02/20 18:31:57 INFO mapred.JobClient:     PHYSICAL_MEMORY_BYTES=2015109120
+15/02/20 18:31:57 INFO mapred.JobClient:     VIRTUAL_MEMORY_BYTES=8875851776
+15/02/20 18:31:57 INFO mapred.JobClient:     COMMITTED_HEAP_BYTES=5242880000
+15/02/20 18:31:57 INFO mapred.JobClient:   File Input Format Counters 
+15/02/20 18:31:57 INFO mapred.JobClient:     Bytes Read=504318474
+15/02/20 18:31:57 INFO mapred.JobClient:   File Output Format Counters 
+15/02/20 18:31:57 INFO mapred.JobClient:     Bytes Written=28331734
+15/02/20 18:31:57 INFO mapred.JobClient:   org.apache.hadoop.mapreduce.lib.input.FileInputFormatCounter
+15/02/20 18:31:57 INFO mapred.JobClient:     BYTES_READ=504121866

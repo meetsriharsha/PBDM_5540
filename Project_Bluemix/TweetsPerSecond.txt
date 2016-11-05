@@ -1,0 +1,82 @@
+####################################################
+# Tweet Beat per second ############################
+# Bar Chart ########################################
+####################################################
+#Scala Notebook Logic
+####################################################
+
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+
+val dashdataDF = sqlContext.load("jdbc", Map(
+"url" -> "jdbc:db2://bluemix05.bluforcloud.com:50000/BLUDB:user=dash019411;password=2k3n2TR3x3mb;",
+"dbtable" -> "DASH019411.NORED"))
+
+dashdataDF.registerTempTable("tweetdata")
+sqlContext.cacheTable("tweetdata")
+val results = sqlContext.sql("SELECT TWEET_CREATED_AT, count(1) as TWEET_COUNT  from tweetdata group by TWEET_CREATED_AT order by TWEET_COUNT DESC")
+results.cache()
+results.count()
+results.collect
+results.repartition(1).saveAsParquetFile("swift://notebooks.spark/TweetsPerSecond.parquet")
+
+####################################################
+#Python Notebook Logic
+####################################################
+
+# Import SQLContext and data types
+from pyspark.sql import SQLContext
+from pyspark.sql.types import *
+%matplotlib inline
+import matplotlib
+import numpy as np
+import matplotlib.pyplot as plt 
+import time
+from dateutil.parser import parse
+# sc is an existing SparkContext.
+sqlContext = SQLContext(sc)
+     
+parquetFile = sqlContext.read.parquet("swift://notebooks.spark/TweetsPerSecond.parquet")
+#print parquetFile
+     
+parquetFile.registerTempTable("TCountPerSecond");
+sqlContext.cacheTable("TCountPerSecond")
+tweets = sqlContext.sql("SELECT * FROM TCountPerSecond")
+resultCount = tweets.count()
+tweets.cache()
+print resultCount
+#tweets.collect()
+TCDateList = [0] * resultCount
+TCDateDF = sqlContext.sql("select TWEET_CREATED_AT as tweetCDate from TCountPerSecond")
+for i in range(0, resultCount-1):
+    TCDateList[i] = TCDateDF.collect()[i].tweetCDate
+print TCDateList
+epochdt = [0] * len(TCDateList)
+for i in range(0, len(TCDateList)):
+    try:
+        epochdtTmp = parse(TCDateList[i])
+    except ValueError:
+        epochdtTmp = parse('Sun Nov 23 01:44:10 +0000 2015')
+    epochdt[i] = time.mktime(epochdtTmp.timetuple())
+
+CountList = [0] * resultCount
+for i in range(0, resultCount-1):
+    CountList[i] = sqlContext.sql("select TWEET_COUNT as tweetCount from FCountPerUser").collect()[i].tweetCount
+#totRecords = sqlContext.sql("select count(1) as totRecords from tweetsperlang").collect()[0].totRecords
+finalList = [0] * len(CountList)
+for i in range(0, len(CountList)):
+    finalList[i] = [epochdt[i], CountList[i]]
+finalListSorted = sorted(finalList, key=lambda x: x[0], reverse=False)
+countFinal = [0] * len(finalListSorted)
+countFinal = [x[1] for x in finalListSorted]
+width = 0.5
+ind = np.arange(len(countFinal))
+plt.bar(ind, countFinal, width, color='g', label="distributions")
+params = plt.gcf()
+plSize = params.get_size_inches()
+params.set_size_inches((plSize[0]*5, plSize[1]*5))
+plt.ylabel('Tweet count')
+plt.xlabel('Timeline')
+plt.title('Distribution of tweets by Time')
+#plt.xticks(ind+width, finalListSorted[:0])
+plt.legend(loc='best')
+plt.show()

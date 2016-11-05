@@ -1,0 +1,80 @@
+####################################################
+#Tweets per Language Bar Chart and Pie Chart###
+####################################################
+#Scala Notebook Logic
+####################################################
+
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+
+val dashdataDF = sqlContext.load("jdbc", Map(
+"url" -> "jdbc:db2://bluemix05.bluforcloud.com:50000/BLUDB:user=dash019411;password=2k3n2TR3x3mb;",
+"dbtable" -> "DASH019411.NORED"))
+
+dashdataDF.registerTempTable("tweetdata")
+sqlContext.cacheTable("tweetdata")
+val results = sqlContext.sql("SELECT TWEET_LANG, count(1) as totTweets from tweetdata group by TWEET_LANG order by totTweets")
+results.cache()
+results.count()
+results.collect
+results.repartition(1).saveAsParquetFile("swift://notebooks.spark/TweetsPerLang.parquet")
+
+
+####################################################
+#Python Notebook Logic
+####################################################
+
+# Import SQLContext and data types
+from pyspark.sql import SQLContext
+from pyspark.sql.types import *
+%matplotlib inline
+import matplotlib
+import numpy as np
+import matplotlib.pyplot as plt 
+# sc is an existing SparkContext.
+sqlContext = SQLContext(sc)
+     
+parquetFile = sqlContext.read.parquet("swift://notebooks.spark/TweetsPerLang.parquet")
+#print parquetFile
+     
+parquetFile.registerTempTable("tweetsperlang");
+sqlContext.cacheTable("tweetsperlang")
+tweets = sqlContext.sql("SELECT * FROM tweetsperlang order by totTweets desc LIMIT 10")
+resultCount = tweets.count()
+tweets.cache()
+print resultCount
+#tweets.collect()
+countList = [0] * resultCount
+for i in range(0, resultCount-1):
+    countList[i] = sqlContext.sql("select totTweets as totTweets from tweetsperlang order by totTweets desc LIMIT 10").collect()[i].totTweets
+print countList
+langList = [0] * resultCount
+for i in range(0, resultCount-1):
+    langList[i] = sqlContext.sql("select TWEET_LANG as tweetLang from tweetsperlang order by totTweets desc LIMIT 10").collect()[i].tweetLang
+#totRecords = sqlContext.sql("select count(1) as totRecords from tweetsperlang").collect()[0].totRecords
+totRecords = 10
+print totRecords
+ind=np.arange(totRecords)
+width = 0.35
+fig = plt.figure()
+plt.bar(ind, countList, width, color='g', label = "distributions")
+params = plt.gcf()
+plSize = params.get_size_inches()
+params.set_size_inches( (plSize[0]*5, plSize[1]*5) )
+plt.ylabel('Tweet count')
+plt.xlabel('Language')
+plt.title('Distribution of tweets by Language')
+plt.xticks(ind+width, langList)
+plt.legend()
+ 
+plt.show()
+
+#Plotting Pie chart for tweets per language
+colorArray = ["yellowgreen", "gold", "purple", "skyblue", "violet", "green", "pink", "lightyellow", "red","brown"]
+f = plt.figure()
+params = plt.gcf()
+plSize = params.get_size_inches()
+params.set_size_inches((plSize[0]*5, plSize[1]*5))
+plt.pie(countList, labels=langList, colors=colorArray, autopct='%1.1f%%', shadow=True, startangle=90)
+plt.legend(topLang, loc='best', fontsize=12)
+plt.axis('equal')
+plt.show()

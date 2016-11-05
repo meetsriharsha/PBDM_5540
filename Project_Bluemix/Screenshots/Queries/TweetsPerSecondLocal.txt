@@ -1,0 +1,121 @@
+####################################################
+# Tweets per Second ###############################
+# Bar Chart ############# ##########################
+####################################################
+#Scala Notebook Logic
+####################################################
+
+import org.apache.spark.SparkContext._
+import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.SparkContext
+import scala.collection.immutable.ListMap
+
+object TweetCount {
+  
+  def main(args: Array[String]) {
+    val conf = new SparkConf().setAppName("TweetCount")
+    conf.setMaster("local")
+    val sc = new SparkContext(conf)
+    val sqlContext = new SQLContext(sc)
+    val tweets = sc.textFile("D:/UMKC/Docs/Subjects/PBDM/PB_Project/iphone6s.json")
+    //.map(gson.toJson(_))
+   // println(tweets.first())
+    //tweets.collect()
+    //val userMap = tweets.map(x => ((extractUserId(x),extractLang(x)), 1))
+    val userTweetCnt = tweets.filter(_.nonEmpty).map(x => (extractUserId(x), 1))
+    val langTweetCnt = tweets.filter(_.nonEmpty).map(x => (extractLang(x), 1))
+    val tweetCreatedDt = tweets.filter(_.nonEmpty).map(x => (extractTweetDate(x), 1))
+    val tweetCreatedDtLang = tweets.filter(_.nonEmpty).map(x => ((extractTweetDate(x),extractLang(x)), 1))
+    val numTweetsPerUser = userTweetCnt.reduceByKey((a, b) => a + b)
+    val numTweetsPerLang = langTweetCnt.reduceByKey((a, b) => a + b)
+    val tweetCreatedDtCnt = tweetCreatedDt.reduceByKey((a, b) => a + b)
+    val tweetCreatedDtLangCnt = tweetCreatedDtLang.reduceByKey((a, b) => a + b)
+    val numTweetsPerUserSorted =numTweetsPerUser.sortBy(_._2)
+    val numTweetsPerLangSorted =numTweetsPerLang.sortBy(_._2)
+    numTweetsPerUser.repartition(1).saveAsTextFile("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerUser")
+    numTweetsPerLang.repartition(1).saveAsTextFile("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerLang")
+    tweetCreatedDtCnt.repartition(1).saveAsTextFile("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerTime")
+    tweetCreatedDtLangCnt.repartition(1).saveAsTextFile("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerTimeLang")
+//    val tweet = sqlContext.load("D:/UMKC/Docs/Subjects/PBDM/PB_Project/iphone6s.json", "json")
+  //  tweet.printSchema()
+    //println(tweet.select("quoted_status.user.id_str").rdd)
+    //val userMp = tweet.map { x => ( }
+  }
+
+  def extractUserId(x: String): String = {
+    val userIdPattern = "\"user\"\\:\\{\"id\"\\:([^,]+)".r
+    val userId = userIdPattern.findFirstMatchIn(x).map(x => x.group(1)).getOrElse("na")
+    userId
+  }
+  def extractLang(x: String): String = {
+  //val userIdPattern = "\"user\".*\"id\"\\:([^,]+)".r
+  //val userIdPattern = "\"user\"\\:\\{\"id\"\\:([^,]+)".r
+    val langPattern = "\"user\"\\:\\{\"id\".*\"lang\"\\:([^,]+)".r
+    val lang = langPattern.findFirstMatchIn(x).map(x => x.group(1)).getOrElse("na")
+    lang
+  }
+  def extractFollowerCnt(x: String): String = {
+  //val userIdPattern = "\"user\".*\"id\"\\:([^,]+)".r
+  //val userIdPattern = "\"user\"\\:\\{\"id\"\\:([^,]+)".r
+    val followerCntPattern = "\"user\"\\:\\{\"id\".*\"followers_count\"\\:([^,]+)".r
+    val followerCnt = followerCntPattern.findFirstMatchIn(x).map(x => x.group(1)).getOrElse("na")
+    followerCnt
+  }
+  def extractTweetDate(x: String): String = {
+  //val userIdPattern = "\"user\".*\"id\"\\:([^,]+)".r
+  //val userIdPattern = "\"user\"\\:\\{\"id\"\\:([^,]+)".r
+    val tweetDatePattern = "\"created_at\"\\:([^,]+)".r
+    val tweetDate = tweetDatePattern.findFirstMatchIn(x).map(x => x.group(1)).getOrElse("na")
+    tweetDate
+  }
+}
+
+####################################################
+#Python Notebook Logic
+####################################################
+import matplotlib
+import numpy as np
+import matplotlib.pyplot as plt
+import re
+import time
+from dateutil.parser import parse
+
+dt = []
+count = []
+f = open('D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerTime/part-00000', 'rU')   #open the file in read universal mode
+for line in f:
+    cells = (re.sub('[\(\)\"\\n]', '', line)).split(",")
+    dt.append(cells[0])
+    count.append(cells[1])
+f.close()
+
+epochdt = [0] * len(dt)
+for i in range(0, len(dt)):
+    try:
+        epochdtTmp = parse(dt[i])
+    except ValueError:
+        epochdtTmp = parse('Sun Nov 23 01:44:10 +0000 2015')
+    epochdt[i] = time.mktime(epochdtTmp.timetuple())
+
+finalList = [0] * len(count)
+for i in range(0, len(count)):
+    finalList[i] = [epochdt[i], count[i]]
+finalListSorted = sorted(finalList, key=lambda x: x[0], reverse=False)
+#print finalListSorted
+countFinal = [0] * len(finalListSorted)
+countFinal = [x[1] for x in finalListSorted]
+#print countFinal
+width = 0.5
+ind = np.arange(len(countFinal))
+plt.bar(ind, countFinal, width, color='g', label="distributions")
+params = plt.gcf()
+plSize = params.get_size_inches()
+params.set_size_inches((plSize[0]*5, plSize[1]*5))
+plt.ylabel('Tweet count')
+plt.xlabel('Timeline')
+plt.title('Distribution of tweets by Time')
+#plt.xticks(ind+width, finalListSorted[:0])
+plt.legend(loc='best')
+plt.show()
+

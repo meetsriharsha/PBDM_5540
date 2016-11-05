@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;TweetVisualization/Visualize&apos; to &apos;Visualize.py&apos;" description="Rename resource &apos;Visualize&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Visualize" name="Visualize.py" stamp="1448691349274" updateReferences="true"/>
+</session>

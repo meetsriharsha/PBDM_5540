@@ -1,0 +1,12 @@
+%AddJar https://github.com/ibm-cds-labs/spark.samples/raw/master/dist/streaming-twitter-assembly-1.2.jar -f
+
+	val demo = com.ibm.cds.spark.samples.StreamingTwitter //Shorter handle 
+    //Twitter OAuth params from section above
+    demo.setConfig("twitter4j.oauth.consumerKey","dF7iP9i3cxpcLeDqAaoaBjjvT")
+    demo.setConfig("twitter4j.oauth.consumerSecret","XzxL2WoE2dCTOZNAGnmXI1w4VYgyJNhO4t02DjeK7mEq2M4D4w")
+    demo.setConfig("twitter4j.oauth.accessToken","86457010-pJp5znqBdUIm8pvspVYfxUyfYarmh1WwkFAfHrWMX")
+    demo.setConfig("twitter4j.oauth.accessTokenSecret","5c3Au47cUJvi0OnDAj7YeQUBDbLjGvXo8l7PHFqnLHwhP")
+    //Tone Analyzer service credential copied from section above
+    demo.setConfig("watson.tone.url","https://gateway.watsonplatform.net/tone-analyzer-experimental/api")
+    demo.setConfig("watson.tone.password","wI6in78cFmVm")
+    demo.setConfig("watson.tone.username","9f95d854-4019-4fc2-9343-2a82bf692f44")

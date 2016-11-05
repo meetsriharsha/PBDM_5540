@@ -1,0 +1,9 @@
+val textfile = sc.textFile("D:/UMKC/Docs/Subjects/PBDM/PB_Project/iphone6s.json")
+
+val counts = textfile.flatMap(line => line.split(","))map(word => (word,1))reduceByKey(_ + _)
+
+counts.collect()
+
+counts.foreach(println)
+
+counts.saveAsTextFile("D:/UMKC/Docs/Subjects/PBDM/PB_Project/output")

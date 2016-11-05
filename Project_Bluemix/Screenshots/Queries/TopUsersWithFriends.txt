@@ -1,0 +1,71 @@
+####################################################
+# Top 20 Active Users ###############################
+# Bar Chart ############# ##########################
+####################################################
+#Scala Notebook Logic
+####################################################
+
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+
+val dashdataDF = sqlContext.load("jdbc", Map(
+"url" -> "jdbc:db2://bluemix05.bluforcloud.com:50000/BLUDB:user=dash019411;password=2k3n2TR3x3mb;",
+"dbtable" -> "DASH019411.NORED"))
+
+dashdataDF.registerTempTable("tweetdata")
+sqlContext.cacheTable("tweetdata")
+val results = sqlContext.sql("SELECT MAX(TWEET_USER_FRIENDS_COUNT) AS FRIENDS_COUNT, TWEET_USER_SCREEN_NAME FROM tweetdata GROUP BY TWEET_USER_SCREEN_NAME ORDER BY FRIENDS_COUNT DESC LIMIT 20");
+
+")
+results.cache()
+results.count()
+results.collect
+results.repartition(1).saveAsParquetFile("swift://notebooks.spark/Top20ActiveUsersList.parquet")
+
+####################################################
+#Python Notebook Logic
+####################################################
+
+# Import SQLContext and data types
+from pyspark.sql import SQLContext
+from pyspark.sql.types import *
+%matplotlib inline
+import matplotlib
+import numpy as np
+import matplotlib.pyplot as plt 
+# sc is an existing SparkContext.
+sqlContext = SQLContext(sc)
+     
+parquetFile = sqlContext.read.parquet("swift://notebooks.spark/TopUsersWithFriends.parquet")
+#print parquetFile
+     
+parquetFile.registerTempTable("UserStatus");
+sqlContext.cacheTable("UserStatus")
+tweets = sqlContext.sql("SELECT * FROM UserStatus order by FRIENDS_COUNT desc")
+resultCount = tweets.count()
+tweets.cache()
+print resultCount
+#tweets.collect()
+SCountList = [0] * resultCount
+for i in range(0, resultCount-1):
+    SCountList[i] = sqlContext.sql("select FRIENDS_COUNT as statusCount from UserStatus order by FRIENDS_COUNT").collect()[i].statusCount
+print TCountList
+UserList = [0] * resultCount
+for i in range(0, resultCount-1):
+    UserList[i] = sqlContext.sql("select TWEET_USER_SCREEN_NAME as userName from UserStatus  order by FRIENDS_COUNT").collect()[i].userName
+#totRecords = sqlContext.sql("select count(1) as totRecords from tweetsperlang").collect()[0].totRecords
+totRecords = 20
+print totRecords
+ind=np.arange(len(UserList)
+width = 0.35
+fig = plt.figure()
+plt.bar(ind, SCountList, width, color='g', label = "distributions")
+params = plt.gcf()
+plSize = params.get_size_inches()
+params.set_size_inches( (plSize[0]*5, plSize[1]*5) )
+plt.ylabel('Friends count')
+plt.xlabel('User Screen Names')
+plt.title('Top Users With Highest Friends')
+plt.xticks(ind+width, UserList)
+plt.legend()
+ 
+plt.show()

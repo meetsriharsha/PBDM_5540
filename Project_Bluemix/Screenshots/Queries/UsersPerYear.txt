@@ -1,0 +1,67 @@
+####################################################
+# Top 20 Active Users ###############################
+# Bar Chart ############# ##########################
+####################################################
+#Scala Notebook Logic
+####################################################
+
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+
+val dashdataDF = sqlContext.load("jdbc", Map(
+"url" -> "jdbc:db2://bluemix05.bluforcloud.com:50000/BLUDB:user=dash019411;password=2k3n2TR3x3mb;",
+"dbtable" -> "DASH019411.NORED"))
+
+dashdataDF.registerTempTable("tweetdata")
+sqlContext.cacheTable("tweetdata")
+val results = sqlContext.sql("SELECT t1.YR as YR, count(1) as CNT FROM (select DISTINCT TWEET_USER_ID, substring(TWEET_USER_CREATED_AT,26) AS YR FROM tweetdata where TWEET_USER_CREATED_AT IS NOT NULL) t1 group by YR order by YR")
+results.cache()
+results.count()
+results.collect
+results.repartition(1).saveAsParquetFile("swift://notebooks.spark/UsersPerYear.parquet")
+
+####################################################
+#Python Notebook Logic
+####################################################
+
+# Import SQLContext and data types
+from pyspark.sql import SQLContext
+from pyspark.sql.types import *
+%matplotlib inline
+import matplotlib
+import numpy as np
+import matplotlib.pyplot as plt 
+# sc is an existing SparkContext.
+sqlContext = SQLContext(sc)
+     
+parquetFile = sqlContext.read.parquet("swift://notebooks.spark/UserYear.parquet")
+#print parquetFile
+     
+parquetFile.registerTempTable("UsersPerYear");
+sqlContext.cacheTable("UsersPerYear")
+tweets = sqlContext.sql("SELECT * FROM UsersPerYear order by CNT desc")
+resultCount = tweets.count()
+tweets.cache()
+print resultCount
+#tweets.collect()
+userCountList = [0] * resultCount
+for i in range(0, resultCount-1):
+    userCountList[i] = sqlContext.sql("select CNT as userCount from UsersPerYear order by CNT desc").collect()[i].userCount
+print userCountList
+yearList = [0] * resultCount
+for i in range(0, resultCount-1):
+    yearList[i] = sqlContext.sql("select YR as yer from UsersPerYear  order by CNT desc").collect()[i].yer
+#totRecords = sqlContext.sql("select count(1) as totRecords from tweetsperlang").collect()[0].totRecords
+ind=np.arange(len(yearList))
+width = 0.35
+fig = plt.figure()
+plt.bar(ind, userCountList, width, color='g', label = "distributions")
+params = plt.gcf()
+plSize = params.get_size_inches()
+params.set_size_inches( (plSize[0]*5, plSize[1]*5) )
+plt.ylabel('Users count')
+plt.xlabel('Year')
+plt.title('Users created per each year')
+plt.xticks(ind+width, yearList)
+plt.legend()
+ 
+plt.show()

@@ -1,0 +1,28 @@
+# Import SQLContext and data types
+#from pyspark.sql import SQLContext
+#from pyspark.sql.types import *
+
+   # conf = new SparkConf().setAppName("TweetCount")
+   # conf.setMaster("local")
+   # sc = new SparkContext(conf)
+    
+    # sc is an existing SparkContext.
+   # sqlContext = SQLContext(sc)
+    #tweet = sqlContext.load("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerLang/part-00000", "json")
+    #tweet.printSchema()
+#text_file = open("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerTimeLang/part-00000","r")
+#lines = text_file.read().split(',')
+#print "\n".join(lines[0])
+#print len(lines)
+#text_file.close()
+import re
+
+output = []
+f = open( 'D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerLang/part-00000', 'rU' ) #open the file in read universal mode
+for line in f:
+    cells = line.split( "," )
+    output.append( ( re.sub('[\(\"]','',cells[ 0 ] ) )) #since we want the first, second and third column
+
+f.close()
+print output
+print "\n".join(output)

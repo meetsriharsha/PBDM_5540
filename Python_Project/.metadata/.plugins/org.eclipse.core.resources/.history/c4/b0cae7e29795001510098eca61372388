@@ -1,0 +1,3 @@
+# Import SQLContext and data types
+from pyspark.sql import SQLContext
+from pyspark.sql.types import *

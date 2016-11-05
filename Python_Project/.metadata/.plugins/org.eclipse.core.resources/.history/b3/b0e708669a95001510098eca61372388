@@ -1,0 +1,17 @@
+# Import SQLContext and data types
+#from pyspark.sql import SQLContext
+#from pyspark.sql.types import *
+
+   # conf = new SparkConf().setAppName("TweetCount")
+   # conf.setMaster("local")
+   # sc = new SparkContext(conf)
+    
+    # sc is an existing SparkContext.
+   # sqlContext = SQLContext(sc)
+    #tweet = sqlContext.load("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerLang/part-00000", "json")
+    #tweet.printSchema()
+text_file = open("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerTimeLang/part-00000","r")
+lines = text_file.read().split(',')
+print lines
+#print len(lines)
+text_file.close()

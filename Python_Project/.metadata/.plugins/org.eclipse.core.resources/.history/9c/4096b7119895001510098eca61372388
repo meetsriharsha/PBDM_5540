@@ -1,0 +1,11 @@
+# Import SQLContext and data types
+from pyspark.sql import SQLContext
+from pyspark.sql.types import *
+
+    val conf = new SparkConf().setAppName("TweetCount")
+    conf.setMaster("local")
+    val sc = new SparkContext(conf)
+    
+    # sc is an existing SparkContext.
+    sqlContext = SQLContext(sc)
+    val tweet = sqlContext.load("D:/UMKC/Docs/Subjects/PBDM/PB_Project/TweetsPerLang/part-00000", "json")

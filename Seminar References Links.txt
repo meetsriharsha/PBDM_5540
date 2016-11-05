@@ -1,0 +1,4 @@
+Architecture
+http://ilpubs.stanford.edu:8090/916/1/views.pdf
+Hotspot Ordered Tables
+http://www.brianfrankcooper.net/

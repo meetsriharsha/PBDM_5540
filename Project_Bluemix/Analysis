@@ -1,0 +1,70 @@
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+
+val dashdataDF = sqlContext.load("jdbc", Map(
+"url" -> "jdbc:db2://bluemix05.bluforcloud.com:50000/BLUDB:user=dash019411;password=2k3n2TR3x3mb;",
+"dbtable" -> "DASH019411.NORED"))
+
+dashdataDF.registerTempTable("tweetdata")
+dashdataDF.printSchema
+val results = sqlContext.sql("SELECT * from tweetdata")
+results.cache()
+results.collect
+fullSet.repartition(1).saveAsParquetFile("swift://notebooks.spark/tweetsFull.parquet")
+
+
+
+
+results.collect
+########################################################################################################################
+important fields in dashdb:
+TWEET_QUOTED_STATUS_USER_ID
+TWEET_QUOTED_STATUS_USER_LANG
+TWEET_LANG
+TWEET_USER_LANG
+TWEET_QUOTED_STATUS_LANG
+TWEET_QUOTED_STATUS_USER_LOCATION
+TWEET_QUOTED_STATUS_USER_TIME_ZONE
+TWEET_CREATED_AT
+TWEET_USER_FOLLOWERS_COUNT
+.
+tweets generated per minute
+
+tweets from countries
+tweets from cities in a country
+no. of tweets per language during a particular time
+no. of tweets per minute graph
+geological visualization of tweets
+tweets by age
+
+top countries of tweets pie chart
+
+Scala notebook to connect to Cloudant DB:
+%AddJar https://github.com/cloudant-labs/spark-cloudant/releases/download/v1.4.1.4/cloudant-spark-1.4.1.jar -f
+val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+val cloudantdata = sqlContext.read.format("com.cloudant.spark").option("cloudant.host","341c63a8-26ff-4032-8af5-599ca42bc837-bluemix.cloudant.com").option("cloudant.username", "341c63a8-26ff-4032-8af5-599ca42bc837-bluemix").option("cloudant.password", "d7054aa525a662334dc3daf3b233d697a3bdafc346b5ba099d0f06da14a0d613").load("nored")
+cloudantdata.registerTempTable("tweetdata")
+cloudantdata.printSchema
+cloudantdata.collect
+val results = sqlContext.sql("SELECT DISTINCT(user.lang) from tweetdata")
+results.collect
+val distrbcrimes = sqlContext.sql("select * from tweetdata where user.lang='en'"
+distrbcrimes.collect
+
+
+#####################################################################################################################################
+***************IPython analytics**********
+# Import SQLContext and data types
+from pyspark.sql import SQLContext
+from pyspark.sql.types import *
+ 
+# sc is an existing SparkContext.
+sqlContext = SQLContext(sc)
+     
+parquetFile = sqlContext.read.parquet("swift://notebooks.spark/TweetsPerLang.parquet")
+print parquetFile
+     
+parquetFile.registerTempTable("tweetsperlang");
+sqlContext.cacheTable("tweetsperlang")
+tweets = sqlContext.sql("SELECT * FROM tweetsperlang")
+print tweets.count()
+tweets.cache()

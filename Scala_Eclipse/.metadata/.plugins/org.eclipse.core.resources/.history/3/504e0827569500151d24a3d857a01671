@@ -1,0 +1,24 @@
+import org.apache.spark.SparkContext._
+import org.apache.spark.{SparkConf, SparkContext}
+import com.google.gson.Gson
+
+object TweetCount {
+  private var gson = new Gson()
+  def main(args: Array[String]) {
+    val conf = new SparkConf().setAppName("TweetCount")
+    conf.setMaster("local")
+    val sc = new SparkContext(conf)
+    val tweets = sc.textFile("D:/UMKC/Docs/Subjects/PBDM/PB_Project/iphone6s.json").map(gson.toJson(_))
+    println(tweets.first())
+    tweets.collect()
+    val userMap = tweets.map(x => (extractUserId(x), 1))
+    val numTweetsByUser = userMap.reduceByKey((a, b) => a + b)
+    numTweetsByUser.saveAsTextFile("count")
+  }
+
+  def extractUserId(x: String): String = {
+    val userIdPattern = "\"user\".*\"id\"\\:([^,]+)".r
+    val userId = userIdPattern.findFirstMatchIn(x).map(x => x.group(1)).getOrElse("Bad Receiver ID")
+    userId
+  }
+}
